@@ -1,0 +1,8 @@
+{
+  "name": "vending-machine",
+  "version": "1.0.0",
+  "description": "Vending machine API and Web application",
+  "author": "araujobarret <araujobarret@gmail.com>",
+  "license": "MIT",
+  "scripts": {}
+}

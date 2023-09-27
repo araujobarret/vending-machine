@@ -1,0 +1,28 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.rulers": [80],
+    "editor.tabSize": 2,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "files.trimTrailingWhitespace": true,
+    "javascript.validate.enable": true,
+    "search.exclude": {
+      "**/node_modules": true,
+      ".git/**": true
+    },
+    "files.exclude": {
+      "**/.git": false
+    },
+    "[json]": {
+      "editor.formatOnSave": false
+    },
+    "[yaml]": {
+      "editor.formatOnSave": false
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.format.enable": false
+  }
