@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import { body, query, validationResult } from "express-validator";
 import auth from "../middleware/auth";
-import { roles } from "../models/user";
+import { roles, userModel } from "../models/user";
 
 const postUserValidator = [
   body("email", "email cannot be empty").not().isEmpty(),
@@ -18,11 +18,27 @@ const getUserValidator = [query("id", "invalid user id").isUUID()];
 
 const router: Router = express.Router();
 
-router.post("/", postUserValidator, (req: Request, res: Response) => {
+router.post("/", postUserValidator, async (req: Request, res: Response) => {
   const errors = validationResult(req);
 
   if (errors.isEmpty()) {
-    const { email, role } = req.body;
+    const { email, role, password } = req.body;
+
+    const user = new userModel({ email, role, password });
+
+    try {
+      const data = await user.save();
+      return res.status(200).send({
+        email: data.email,
+        role: data.role,
+        deposit: data.deposit,
+        _id: data._id,
+      });
+    } catch (e) {
+      return res
+        .status(400)
+        .send({ error: "Something went wrong when trying to save the user" });
+    }
     return res.status(201).send({ email, role, amount: 0, id: "temporary-id" });
   }
 
