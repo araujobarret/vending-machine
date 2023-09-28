@@ -22,7 +22,7 @@ app.use(cors());
 
 // Routes
 app.use("/test", (req, res) => {
-  res.status(200).send();
+  res.sendStatus(200);
 });
 app.use("/", auth);
 app.use("/user", user);

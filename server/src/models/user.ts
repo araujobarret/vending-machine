@@ -1,4 +1,4 @@
-import { Document, model, Model, Schema } from "mongoose";
+import { Document, model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
 export type Role = "buyer" | "seller";
@@ -12,10 +12,11 @@ interface User extends Document {
   password: string;
   role: Role;
   deposit: number;
-  activeToken?: string;
+  activeTokenId?: string;
 }
 
 const userSchema = new Schema<User>({
+  // TODO: fix uniqueness of email
   email: {
     type: String,
     required: true,
@@ -34,7 +35,7 @@ const userSchema = new Schema<User>({
     type: Number,
     default: 0,
   },
-  activeToken: String,
+  activeTokenId: String,
 });
 
 userSchema.pre("save", function (next) {
@@ -49,4 +50,4 @@ userSchema.pre("save", function (next) {
   next();
 });
 
-export const userModel: Model<User> = model<User>("user", userSchema);
+export const userModel = model<User>("user", userSchema);
