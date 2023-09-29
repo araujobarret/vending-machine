@@ -21,7 +21,6 @@ export interface User extends Document, UserPayload {
 }
 
 const userSchema = new Schema<User>({
-  // TODO: fix uniqueness of email
   email: {
     type: String,
     required: true,

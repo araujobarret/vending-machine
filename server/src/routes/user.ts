@@ -15,6 +15,11 @@ const postUserValidator = [
   body("role", "role must be seller or buyer").isIn(roles),
 ];
 
+const patchUserValidator = [
+  body("email", "invalid email").isEmail(),
+  body("role", "role must be seller or buyer").isIn(roles),
+];
+
 const router: Router = express.Router();
 
 router.post("/", postUserValidator, async (req: Request, res: Response) => {
@@ -22,8 +27,8 @@ router.post("/", postUserValidator, async (req: Request, res: Response) => {
 
   if (errors.isEmpty()) {
     try {
-      const user = saveUser(req.body);
-      return res.status(200).send(user);
+      const user = await saveUser(req.body);
+      return res.status(201).send(user);
     } catch (e) {
       return res
         .status(400)
@@ -41,13 +46,16 @@ router.delete("/", auth, async (_, res: Response) => {
       return res.sendStatus(200);
     }
 
-    return res.status(400).send({ message: "user not found" });
+    return res.sendStatus(404);
   } catch (e) {
     return res.send(400).send({ message: "error when deleting the user" });
   }
 });
 
-router.patch("/", auth, async (req: Request, res: Response) => {});
+router.patch("/", auth, async (req: Request, res: Response) => {
+  // TODO: implement patch
+  return res.sendStatus(400);
+});
 
 router.get("/:id", auth, async (req: Request, res: Response) => {
   // Users are only allowed to get their own information, not about the other users

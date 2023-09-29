@@ -11,7 +11,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
   const authorization = req.header("authorization");
 
   if (!authorization || !authorization.includes("Bearer ")) {
-    return res.status(401).send();
+    return res.sendStatus(401);
   }
 
   try {
@@ -34,4 +34,41 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
   } catch (e) {
     return res.sendStatus(401);
   }
+};
+
+// No harm on having some duplicated code in checkSellerPermission and checkBuyerPermission
+export const checkSellerPermission = async (
+  _: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = await userModel.findById(res.locals.user.id);
+
+  if (!user) {
+    return res.sendStatus(401);
+  }
+
+  if (user.role === "buyer") {
+    return res.sendStatus(403);
+  }
+
+  return next();
+};
+
+export const checkBuyerPermission = async (
+  _: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = await userModel.findById(res.locals.user.id);
+
+  if (!user) {
+    return res.sendStatus(401);
+  }
+
+  if (user.role === "seller") {
+    return res.sendStatus(403);
+  }
+
+  return next();
 };

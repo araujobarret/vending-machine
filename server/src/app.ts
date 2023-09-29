@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import user from "./routes/user";
 import auth from "./routes/auth";
+import product from "./routes/product";
+import products from "./routes/products";
+import deposit from "./routes/deposit";
+import reset from "./routes/reset";
 
 dotenv.config();
 
@@ -21,11 +25,12 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use("/test", (req, res) => {
-  res.sendStatus(200);
-});
 app.use("/", auth);
 app.use("/user", user);
+app.use("/product", product);
+app.use("/products", products);
+app.use("/deposit", deposit);
+app.use("/reset", reset);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
