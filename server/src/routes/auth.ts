@@ -50,13 +50,15 @@ router.post(
         },
       };
       try {
+        // TODO: check for already logged-in session
         const uuid = randomUUID();
         const accessToken = jwt.sign(payload, JWT_SECRET, {
           expiresIn: "7d",
           jwtid: uuid,
         });
-        user.activeTokenId = uuid;
-        await user.save();
+        await userModel.findByIdAndUpdate(user.id, {
+          $set: { activeTokenId: uuid },
+        });
 
         return res.status(200).send(accessToken);
       } catch (e) {

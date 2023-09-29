@@ -5,6 +5,10 @@
   "main": "index.ts",
   "author": "araujobarret",
   "license": "MIT",
+  "scripts": {
+    "dev": "nodemon",
+    "start:dev": "ts-node ./src/app.ts"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -22,6 +26,7 @@
     "@types/jsonwebtoken": "^9.0.3",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.7.0",
+    "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }
