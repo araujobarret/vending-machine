@@ -1,15 +1,10 @@
 import express, { Request, Response, Router } from "express";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import { auth } from "../middleware/auth";
 import { userModel } from "../models/user";
-import auth from "../middleware/auth";
-import { randomUUID } from "crypto";
-
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET || "";
+import { createAccessToken } from "../services/auth";
+import { unsetActiveTokenId } from "../services/user";
 
 const router: Router = express.Router();
 
@@ -30,42 +25,29 @@ router.post(
 
     if (errors.isEmpty()) {
       const { email, password } = req.body;
-      const user = await userModel.findOne({ email });
 
+      const user = await userModel.findOne({ email });
       if (!user) {
         return res.sendStatus(400);
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
-
       if (!isMatch) {
-        return res.status(400).json({ msg: "Invalid credentials" });
+        return res.status(400).json({ message: "Invalid credentials" });
       }
 
-      const payload = {
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        },
-      };
       try {
         // TODO: check for already logged-in session
-        const uuid = randomUUID();
-        const accessToken = jwt.sign(payload, JWT_SECRET, {
-          expiresIn: "7d",
-          jwtid: uuid,
-        });
-        await userModel.findByIdAndUpdate(user.id, {
-          $set: { activeTokenId: uuid },
-        });
+        const { accessToken, jwtid } = createAccessToken(user);
+        await userModel.findOneAndUpdate(
+          { _id: user.id },
+          { $set: { activeTokenId: jwtid } }
+        );
 
         return res.status(200).send(accessToken);
       } catch (e) {
         console.error("[POST /login]", e);
-        return res
-          .status(400)
-          .send({ message: "Something went wrong, try again" });
+        return res.status(400).send({ message: "Login has failed" });
       }
     }
 
@@ -73,10 +55,13 @@ router.post(
   }
 );
 
-router.post("/logout/all", auth, (_, res: Response) => {
-  return res
-    .status(200)
-    .send({ message: "successfully logged out from all sessions" });
+router.post("/logout/all", auth, async (_, res: Response) => {
+  try {
+    await unsetActiveTokenId(res.locals?.user?.id);
+    return res.sendStatus(200);
+  } catch (e) {
+    return res.status(400).send({ message: "Logout has failed" });
+  }
 });
 
 export default router;

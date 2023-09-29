@@ -6,12 +6,17 @@ export const roles: Role[] = ["buyer", "seller"];
 
 const SALT_WORK_FACTOR = 10;
 
-interface User extends Document {
-  id?: string;
+export interface UserPayload {
+  id: string;
   email: string;
-  password: string;
   role: Role;
   deposit: number;
+}
+
+export interface User extends Document, UserPayload {
+  // id from Document is any, in order to suppress the error, we overwrite the type
+  id: string;
+  password: string;
   activeTokenId?: string;
 }
 
@@ -20,6 +25,7 @@ const userSchema = new Schema<User>({
   email: {
     type: String,
     required: true,
+    unique: true,
     trim: true,
   },
   password: {
@@ -45,7 +51,7 @@ userSchema.pre("save", function (next) {
   const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
   const hash = bcrypt.hashSync(user.password, salt);
 
-  // TODO: error control if hashing fails
+  // TODO: error handling if hashing fails
   user.password = hash;
   next();
 });
