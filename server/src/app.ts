@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -12,11 +12,10 @@ import reset from "./routes/reset";
 
 dotenv.config();
 
-const app: Express = express();
+const app = express();
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || "");
-
 mongoose.connection.on("connected", () => {
   console.log("[info]: Connected to MongoDB");
 });
@@ -35,6 +34,8 @@ app.use("/buy", buy);
 app.use("/reset", reset);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+export const server = app.listen(PORT, () => {
   console.log(`[info]: Server is running on port ${PORT}`);
 });
+
+export default app;

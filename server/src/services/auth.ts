@@ -1,13 +1,15 @@
 import jwt from "jsonwebtoken";
 import { randomUUID } from "crypto";
 import dotenv from "dotenv";
-import { User } from "../models/user";
+import bcrypt from "bcrypt";
+import { UserPayload } from "../models/user";
 
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
+const SALT_WORK_FACTOR = 10;
 
-export const createAccessToken = (user: User) => {
+export const createAccessToken = (user: Pick<UserPayload, "id" | "email">) => {
   const payload = {
     user: {
       id: user.id,
@@ -22,4 +24,13 @@ export const createAccessToken = (user: User) => {
     }),
     jwtid: uuid,
   };
+};
+
+export const createPasswordHash = (password: string) => {
+  // generate a salt
+  const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+  const hash = bcrypt.hashSync(password, salt);
+
+  // TODO: error handling if hashing fails
+  return hash;
 };

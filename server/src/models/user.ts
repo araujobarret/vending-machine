@@ -1,10 +1,8 @@
 import { Document, model, Schema } from "mongoose";
-import bcrypt from "bcrypt";
+import { createPasswordHash } from "../services/auth";
 
 export type Role = "buyer" | "seller";
 export const roles: Role[] = ["buyer", "seller"];
-
-const SALT_WORK_FACTOR = 10;
 
 export interface UserPayload {
   id: string;
@@ -46,13 +44,12 @@ const userSchema = new Schema<User>({
 userSchema.pre("save", function (next) {
   var user = this;
 
-  // generate a salt
-  const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-  const hash = bcrypt.hashSync(user.password, salt);
-
-  // TODO: error handling if hashing fails
-  user.password = hash;
-  next();
+  try {
+    user.password = createPasswordHash(user.password);
+    next();
+  } catch (e) {
+    throw new Error("Internal error");
+  }
 });
 
 // TODO: cascade delete product when deleting a seller
