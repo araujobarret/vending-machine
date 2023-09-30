@@ -7,6 +7,7 @@ import auth from "./routes/auth";
 import product from "./routes/product";
 import products from "./routes/products";
 import deposit from "./routes/deposit";
+import but from "./routes/buy";
 import reset from "./routes/reset";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/user", user);
 app.use("/product", product);
 app.use("/products", products);
 app.use("/deposit", deposit);
+app.use("/buy", buy);
 app.use("/reset", reset);
 
 const PORT = process.env.PORT || 5000;

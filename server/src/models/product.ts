@@ -2,8 +2,10 @@ import { Document, model, Schema } from "mongoose";
 
 export interface ProductPayload {
   id: string;
-  name: string;
-  price: number;
+  productName: string;
+  cost: number;
+  amountAvailable: number;
+  sellerId: string;
 }
 
 export interface Product extends Document, ProductPayload {
@@ -12,16 +14,26 @@ export interface Product extends Document, ProductPayload {
 }
 
 const productSchema = new Schema<Product>({
-  name: {
+  productName: {
     type: String,
     required: true,
     trim: true,
   },
-  price: {
+  cost: {
     type: Number,
     required: true,
     min: 0.0,
     max: 99.0,
+  },
+  amountAvailable: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 999,
+  },
+  sellerId: {
+    type: String,
+    required: true,
   },
 });
 

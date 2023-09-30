@@ -1,23 +1,36 @@
 import express, { Request, Response, Router } from "express";
 import { body, validationResult } from "express-validator";
 import { auth, checkSellerPermission } from "../middleware/auth";
-import { getProduct, saveProduct, updateProduct } from "../services/product";
+import {
+  getProduct,
+  isProductServiceError,
+  saveProduct,
+  updateProduct,
+} from "../services/product";
 
 const postPutValidator = [
-  body("name", "name cannot be empty").notEmpty(),
-  body("name", "name minimum length is 1 character").isLength({ min: 1 }),
-  body("price", "price cannot be empty").notEmpty(),
-  body("price", "price must be a number between 0 and 99").isFloat({
+  body("productName", "productName cannot be empty").notEmpty(),
+  body("productName", "productName minimum length is 1 character").isLength({
+    min: 1,
+  }),
+  body("cost", "cost cannot be empty").notEmpty(),
+  body("cost", "cost must be a number between 0 and 99").isFloat({
     min: 0,
     max: 99,
   }),
-  body("price", "price's mantissa must be multiple of 5").custom(
+  body("cost", "cost's mantissa must be multiple of 5").custom(
     (value: number) => {
       const mantissa = parseInt(value.toFixed(2).split(".")[1]);
 
       return mantissa === 0 || mantissa % 5 === 0;
     }
   ),
+  body("amountAvailable", "amountAvailable cannot be empty").notEmpty(),
+  body(
+    "amountAvailable",
+    "amountAvailable must be a number between 1 and 999"
+  ).isInt({ max: 999, min: 1 }),
+  body("sellerId", "amountAvailable cannot be empty").notEmpty(),
 ];
 
 const router: Router = express.Router();
@@ -32,6 +45,11 @@ router.post(
 
     if (errors.isEmpty()) {
       const product = await saveProduct(req.body);
+
+      if (isProductServiceError(product)) {
+        return res.status(product.code).send(product);
+      }
+
       return res.status(200).send(product);
     }
 
@@ -62,11 +80,16 @@ router.put(
   async (req: Request, res: Response) => {
     try {
       const product = await updateProduct({ ...req.body, id: req.params.id });
-      if (product) {
-        return res.status(200).send(product);
+
+      if (!product) {
+        return res.sendStatus(404);
       }
 
-      return res.sendStatus(404);
+      if (isProductServiceError(product)) {
+        return res.status(product.code).send(product);
+      }
+
+      return res.status(200).send(product);
     } catch (e) {
       return res
         .status(400)

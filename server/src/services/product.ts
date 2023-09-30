@@ -1,20 +1,41 @@
-import { ProductPayload, productModel } from "../models/product";
+import { Product, ProductPayload, productModel } from "../models/product";
+import { userModel } from "../models/user";
+
+type ProductServiceError = { code: number; message: string };
+type ProductErrorCode = "seller_not_found" | "user_not_seller";
+type ProductError = Record<ProductErrorCode, ProductServiceError>;
+
+const productError: ProductError = {
+  seller_not_found: {
+    code: 404,
+    message: "seller not found",
+  },
+  user_not_seller: {
+    code: 422,
+    message: "sellerId cannot belong to a buyer",
+  },
+};
 
 export const saveProduct = async ({
-  name,
-  price,
-}: {
-  name: string;
-  price: number;
-}): Promise<ProductPayload> => {
-  const product = new productModel({ name, price });
-  const data = await product.save();
+  productName,
+  cost,
+  amountAvailable,
+  sellerId,
+}: ProductPayload): Promise<ProductPayload | ProductServiceError> => {
+  const error = await checkSellerId(sellerId);
+  if (error) {
+    return error;
+  }
 
-  return {
-    id: data.id,
-    name: data.name,
-    price: data.price,
-  };
+  const product = new productModel({
+    productName,
+    cost,
+    amountAvailable,
+    sellerId,
+  });
+  await product.save();
+
+  return getProductPayload(product);
 };
 
 export const getProduct = async (
@@ -26,11 +47,7 @@ export const getProduct = async (
     return null;
   }
 
-  return {
-    id: product.id,
-    name: product.name,
-    price: product.price,
-  };
+  return getProductPayload(product);
 };
 
 export const getProducts = async (): Promise<ProductPayload[]> => {
@@ -38,13 +55,20 @@ export const getProducts = async (): Promise<ProductPayload[]> => {
 };
 
 export const updateProduct = async ({
-  name,
-  price,
+  productName,
+  cost,
+  amountAvailable,
+  sellerId,
   id,
-}: ProductPayload): Promise<ProductPayload | null> => {
+}: ProductPayload): Promise<ProductPayload | ProductServiceError | null> => {
+  const error = await checkSellerId(sellerId);
+  if (error) {
+    return error;
+  }
+
   const product = await productModel.findOneAndUpdate(
     { _id: id },
-    { name, price },
+    { productName, cost, amountAvailable, sellerId },
     { new: true }
   );
 
@@ -52,13 +76,40 @@ export const updateProduct = async ({
     return null;
   }
 
-  return {
-    id: product.id,
-    name: product.name,
-    price: product.price,
-  };
+  return getProductPayload(product);
 };
 
 export const deleteProduct = (id: string) => {
   return productModel.findOneAndDelete({ _id: id });
+};
+
+export const isProductServiceError = (
+  data: ProductPayload | ProductServiceError
+): data is ProductServiceError => {
+  return (data as ProductServiceError).code !== undefined;
+};
+
+const getProductPayload = (product: Product) => {
+  return {
+    id: product.id,
+    productName: product.productName,
+    cost: product.cost,
+    amountAvailable: product.amountAvailable,
+    sellerId: product.sellerId,
+  };
+};
+
+const checkSellerId = async (
+  sellerId: string
+): Promise<ProductServiceError | null> => {
+  const user = await userModel.findOne({ _id: sellerId });
+
+  if (!user) {
+    return productError.seller_not_found;
+  }
+  if (user.role === "buyer") {
+    return productError.user_not_seller;
+  }
+
+  return null;
 };

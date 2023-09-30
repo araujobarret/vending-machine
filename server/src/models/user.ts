@@ -55,4 +55,6 @@ userSchema.pre("save", function (next) {
   next();
 });
 
+// TODO: cascade delete product when deleting a seller
+
 export const userModel = model<User>("user", userSchema);
