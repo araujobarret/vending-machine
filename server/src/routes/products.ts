@@ -3,7 +3,7 @@ import { getProducts } from "../services/product";
 
 const router: Router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (_: Request, res: Response) => {
   const products = await getProducts();
   return res.status(200).send(products);
 });

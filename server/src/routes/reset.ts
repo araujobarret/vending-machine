@@ -10,7 +10,7 @@ router.post(
   "/",
   auth,
   checkBuyerPermission,
-  async (req: Request, res: Response) => {
+  async (_: Request, res: Response) => {
     try {
       const user = await resetUserDeposit(res.locals.user.id);
 

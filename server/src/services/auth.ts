@@ -12,7 +12,6 @@ export const createAccessToken = (user: User) => {
     user: {
       id: user.id,
       email: user.email,
-      role: user.role,
     },
   };
   const uuid = randomUUID();

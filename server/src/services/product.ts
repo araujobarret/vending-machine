@@ -2,7 +2,11 @@ import { Product, ProductPayload, productModel } from "../models/product";
 import { userModel } from "../models/user";
 
 type ProductServiceError = { code: number; message: string };
-type ProductErrorCode = "seller_not_found" | "user_not_seller";
+type ProductErrorCode =
+  | "product_not_found"
+  | "seller_not_found"
+  | "user_not_seller"
+  | "seller_not_authorized";
 type ProductError = Record<ProductErrorCode, ProductServiceError>;
 
 export const saveProduct = async ({
@@ -68,8 +72,17 @@ export const updateProduct = async ({
   return getProductPayload(product);
 };
 
-export const deleteProduct = (id: string) => {
-  return productModel.findOneAndDelete({ _id: id });
+export const deleteProduct = async (productId: string, sellerId: string) => {
+  const product = await productModel.findOneAndDelete({ _id: productId });
+
+  if (!product) {
+    return PRODUCT_ERROR.product_not_found;
+  }
+  if (product.sellerId !== sellerId) {
+    return PRODUCT_ERROR.seller_not_authorized;
+  }
+
+  return getProductPayload(product);
 };
 
 export const isProductServiceError = (
@@ -78,7 +91,15 @@ export const isProductServiceError = (
   return (data as ProductServiceError).code !== undefined;
 };
 
-const productError: ProductError = {
+const PRODUCT_ERROR: ProductError = {
+  product_not_found: {
+    code: 404,
+    message: "product not found",
+  },
+  seller_not_authorized: {
+    code: 403,
+    message: "seller not authorized to execute the operation",
+  },
   seller_not_found: {
     code: 404,
     message: "seller not found",
@@ -105,10 +126,10 @@ const checkSellerId = async (
   const user = await userModel.findOne({ _id: sellerId });
 
   if (!user) {
-    return productError.seller_not_found;
+    return PRODUCT_ERROR.seller_not_found;
   }
   if (user.role === "buyer") {
-    return productError.user_not_seller;
+    return PRODUCT_ERROR.user_not_seller;
   }
 
   return null;

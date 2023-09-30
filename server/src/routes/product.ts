@@ -2,6 +2,7 @@ import express, { Request, Response, Router } from "express";
 import { body, validationResult } from "express-validator";
 import { auth, checkSellerPermission } from "../middleware/auth";
 import {
+  deleteProduct,
   getProduct,
   isProductServiceError,
   saveProduct,
@@ -106,12 +107,15 @@ router.delete(
   checkSellerPermission,
   async (req: Request, res: Response) => {
     try {
-      const product = await updateProduct({ ...req.body, id: req.params.id });
-      if (product) {
-        return res.sendStatus(200);
+      const productOrError = await deleteProduct(
+        req.params.id,
+        res.locals.user.id
+      );
+      if (isProductServiceError(productOrError)) {
+        return res.status(productOrError.code).send(productOrError);
       }
 
-      return res.sendStatus(404);
+      return res.send(200).send(productOrError);
     } catch (e) {
       return res
         .status(400)
