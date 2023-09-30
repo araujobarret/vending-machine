@@ -30,7 +30,6 @@ const postPutValidator = [
     "amountAvailable",
     "amountAvailable must be a number between 1 and 999"
   ).isInt({ max: 999, min: 1 }),
-  body("sellerId", "amountAvailable cannot be empty").notEmpty(),
 ];
 
 const router: Router = express.Router();
@@ -44,7 +43,10 @@ router.post(
     const errors = validationResult(req);
 
     if (errors.isEmpty()) {
-      const product = await saveProduct(req.body);
+      const product = await saveProduct({
+        ...req.body,
+        sellerId: res.locals.user.id,
+      });
 
       if (isProductServiceError(product)) {
         return res.status(product.code).send(product);

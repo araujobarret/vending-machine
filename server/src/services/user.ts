@@ -1,5 +1,5 @@
 import { Role, UserPayload, userModel } from "../models/user";
-import { convertCoinToFloat } from "../utils/money";
+import { convertCentsToFloat } from "../utils/money";
 
 export const saveUser = async ({
   email,
@@ -59,7 +59,7 @@ export const incrementUserDeposit = async ({
     {
       _id: id,
     },
-    { $inc: { deposit: convertCoinToFloat(coin) } },
+    { $inc: { deposit: convertCentsToFloat(coin) } },
     { new: true }
   );
 

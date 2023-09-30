@@ -7,7 +7,7 @@ import auth from "./routes/auth";
 import product from "./routes/product";
 import products from "./routes/products";
 import deposit from "./routes/deposit";
-import but from "./routes/buy";
+import buy from "./routes/buy";
 import reset from "./routes/reset";
 
 dotenv.config();

@@ -5,17 +5,6 @@ type ProductServiceError = { code: number; message: string };
 type ProductErrorCode = "seller_not_found" | "user_not_seller";
 type ProductError = Record<ProductErrorCode, ProductServiceError>;
 
-const productError: ProductError = {
-  seller_not_found: {
-    code: 404,
-    message: "seller not found",
-  },
-  user_not_seller: {
-    code: 422,
-    message: "sellerId cannot belong to a buyer",
-  },
-};
-
 export const saveProduct = async ({
   productName,
   cost,
@@ -87,6 +76,17 @@ export const isProductServiceError = (
   data: ProductPayload | ProductServiceError
 ): data is ProductServiceError => {
   return (data as ProductServiceError).code !== undefined;
+};
+
+const productError: ProductError = {
+  seller_not_found: {
+    code: 404,
+    message: "seller not found",
+  },
+  user_not_seller: {
+    code: 422,
+    message: "sellerId cannot belong to a buyer",
+  },
 };
 
 const getProductPayload = (product: Product) => {

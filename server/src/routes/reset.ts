@@ -1,5 +1,4 @@
 import express, { Request, Response, Router } from "express";
-import { body, validationResult } from "express-validator";
 import { auth, checkBuyerPermission } from "../middleware/auth";
 import { resetUserDeposit } from "../services/user";
 
@@ -21,9 +20,7 @@ router.post(
 
       return res.status(200).send(user);
     } catch (e) {
-      return res
-        .status(400)
-        .send({ error: "Something went wrong when resetting user's deposit" });
+      return res.status(500).send({ error: "Internal server error" });
     }
   }
 );
