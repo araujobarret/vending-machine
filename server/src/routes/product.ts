@@ -50,7 +50,7 @@ router.post(
       });
 
       if (isProductServiceError(product)) {
-        return res.status(product.code).send(product);
+        return res.status(product.statusCode).send(product);
       }
 
       return res.status(200).send(product);
@@ -70,7 +70,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     return res.sendStatus(404);
   } catch (e) {
     return res
-      .status(400)
+      .status(500)
       .send({ error: "Something went wrong when getting the product" });
   }
 });
@@ -81,23 +81,33 @@ router.put(
   auth,
   checkSellerPermission,
   async (req: Request, res: Response) => {
-    try {
-      const product = await updateProduct({ ...req.body, id: req.params.id });
+    const errors = validationResult(req);
 
-      if (!product) {
-        return res.sendStatus(404);
+    if (errors.isEmpty()) {
+      try {
+        const product = await updateProduct({
+          ...req.body,
+          id: req.params.id,
+          sellerId: res.locals.user.id,
+        });
+
+        if (!product) {
+          return res.sendStatus(404);
+        }
+
+        if (isProductServiceError(product)) {
+          return res.status(product.statusCode).send(product);
+        }
+
+        return res.status(200).send(product);
+      } catch (e) {
+        return res
+          .status(500)
+          .send({ error: "Something went wrong when getting the product" });
       }
-
-      if (isProductServiceError(product)) {
-        return res.status(product.code).send(product);
-      }
-
-      return res.status(200).send(product);
-    } catch (e) {
-      return res
-        .status(400)
-        .send({ error: "Something went wrong when getting the product" });
     }
+
+    return res.status(422).send({ errors: errors.array() });
   }
 );
 
@@ -112,13 +122,14 @@ router.delete(
         res.locals.user.id
       );
       if (isProductServiceError(productOrError)) {
-        return res.status(productOrError.code).send(productOrError);
+        return res.status(productOrError.statusCode).send(productOrError);
       }
 
-      return res.send(200).send(productOrError);
+      return res.status(200).send(productOrError);
     } catch (e) {
+      console.log("error", e);
       return res
-        .status(400)
+        .status(500)
         .send({ error: "Something went wrong when deleting the product" });
     }
   }

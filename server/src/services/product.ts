@@ -1,7 +1,7 @@
 import { Product, ProductPayload, productModel } from "../models/product";
 import { userModel } from "../models/user";
 
-type ProductServiceError = { code: number; message: string };
+type ProductServiceError = { statusCode: number; code: ProductErrorCode; message: string };
 type ProductErrorCode =
   | "product_not_found"
   | "seller_not_found"
@@ -93,26 +93,30 @@ export const isProductServiceError = (
 
 const PRODUCT_ERROR: ProductError = {
   product_not_found: {
-    code: 404,
+    statusCode: 404,
+    code: "product_not_found",
     message: "product not found",
   },
   seller_not_authorized: {
-    code: 403,
+    statusCode: 403,
+    code: "seller_not_authorized",
     message: "seller not authorized to execute the operation",
   },
   seller_not_found: {
-    code: 404,
+    statusCode: 404,
+    code: "seller_not_found",
     message: "seller not found",
   },
   user_not_seller: {
-    code: 422,
+    statusCode: 403,
+    code: "user_not_seller",
     message: "sellerId cannot belong to a buyer",
   },
 };
 
 const getProductPayload = (product: Product) => {
   return {
-    id: product.id,
+    id: product._id,
     productName: product.productName,
     cost: product.cost,
     amountAvailable: product.amountAvailable,
