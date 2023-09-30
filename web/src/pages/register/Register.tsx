@@ -6,7 +6,7 @@ import { useAuthContext } from "../../providers/Auth";
 
 const { Text } = Typography;
 
-export const Login: React.FC = () => {
+export const Register: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +28,7 @@ export const Login: React.FC = () => {
   return (
     <Row style={{ paddingTop: "15vh" }}>
       <Col span={8} offset={8}>
-        <Card title="Login">
+        <Card title="Register">
           <Space direction="vertical" size="middle" style={{ display: "flex" }}>
             <Row align="middle">
               <Col span={6}>

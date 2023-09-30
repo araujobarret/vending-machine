@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Layout } from "antd";
-
 import Products from "./pages/products/products";
 import { Nav } from "./components/Nav";
 import { AuthProvider } from "./providers/Auth";
 import { RequireAuth } from "./components/RequireAuth";
 import { Login } from "./pages/login/Login";
+import { Register } from "./pages/register/Register";
 
 const { Content, Header } = Layout;
 
@@ -28,12 +28,17 @@ function App() {
                   </RequireAuth>
                 }
               />
+              <Route
+                path="/vending-machine"
+                element={
+                  <RequireAuth>
+                    <div>Vending Machine</div>
+                  </RequireAuth>
+                }
+              />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" Component={() => <div>Register</div>} />
-              <Route path="/products/:id" Component={Products} />
-              <Route path="/deposit" Component={Products} />
-              <Route path="/buy" Component={Products} />
-              <Route path="/reset-deposit" Component={Products} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/products" Component={Products} />
             </Routes>
           </Content>
         </Layout>

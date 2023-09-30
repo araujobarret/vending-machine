@@ -12,15 +12,15 @@ let AuthContext = React.createContext<AuthContextType>(null!);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   let [user, setUser] = React.useState<any>(null);
 
-  let login = (newUser: string, callback: VoidFunction) => {
-    return fakeAuthProvider.signin(() => {
-      setUser(newUser);
+  let login = (email: string, callback: VoidFunction) => {
+    return fakeAuthProvider.login(() => {
+      setUser(email);
       callback();
     });
   };
 
   let logout = (callback: VoidFunction) => {
-    return fakeAuthProvider.signout(() => {
+    return fakeAuthProvider.logout(() => {
       setUser(null);
       callback();
     });
