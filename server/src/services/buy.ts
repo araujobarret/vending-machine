@@ -3,7 +3,11 @@ import { Product, productModel } from "../models/product";
 import { User, userModel } from "../models/user";
 import { calculateChangeToCoins } from "../utils/money";
 
-type BuyServiceError = { code: number; message: string };
+type BuyServiceError = {
+  statusCode: number;
+  code: BuyErrorCode;
+  message: string;
+};
 type BuyErrorCode =
   | "general_error"
   | "insufficient_funds"
@@ -133,19 +137,23 @@ export const isBuyServiceError = (
 
 const BUY_ERROR: BuyError = {
   general_error: {
-    code: 500,
+    statusCode: 500,
+    code: "general_error",
     message: "Internal server error",
   },
   insufficient_funds: {
-    code: 400,
+    statusCode: 400,
+    code: "insufficient_funds",
     message: "Insufficient funds for the transaction",
   },
   product_not_found: {
-    code: 404,
+    statusCode: 404,
+    code: "product_not_found",
     message: "Product not found",
   },
   insufficient_product_available: {
-    code: 400,
+    statusCode: 400,
+    code: "insufficient_product_available",
     message: "Insufficient product availability",
   },
 };

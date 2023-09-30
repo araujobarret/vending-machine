@@ -26,7 +26,7 @@ router.post(
       const data = await buy({ ...req.body, userId: res.locals.user.id });
 
       if (isBuyServiceError(data)) {
-        return res.status(data.code).send(data);
+        return res.status(data.statusCode).send(data);
       }
 
       return res.status(200).send(data);

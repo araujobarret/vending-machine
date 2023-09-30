@@ -22,23 +22,72 @@ afterEach(async () => {
 });
 
 describe("POST /buy", () => {
-  test("successfully completes the purchase", async () => {
+  const getBearerToken = async () => {
     const login = await request(app).post("/login").send({
       email: mockBuyer.email,
       password: mockBuyer.password,
     });
-    const buyerToken = login.text;
+    return `Bearer ${login.text}`;
+  };
+
+  test("successfully completes the purchase", async () => {
     const response = await request(app)
       .post("/buy")
-      .set("Authorization", `Bearer ${buyerToken}`)
+      .set("Authorization", await getBearerToken())
       .send({
         productId: productId,
         amountOfProducts: 2,
       });
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("total");
-    expect(response.body).toHaveProperty("change");
+    expect(response.body).toMatchObject({
+      total: 1,
+      change: [20],
+    });
+  });
+
+  test("returns the right change", async () => {
+    const response = await request(app)
+      .post("/buy")
+      .set("Authorization", await getBearerToken())
+      .send({
+        productId: productId,
+        amountOfProducts: 1,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      total: 0.5,
+      change: [50, 20],
+    });
+  });
+
+  test("returns an error given invalid product amount", async () => {
+    const response = await request(app)
+      .post("/buy")
+      .set("Authorization", await getBearerToken())
+      .send({
+        productId: productId,
+        amountOfProducts: 11,
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.statusCode).toBe(400);
+    expect(response.body.code).toBe("insufficient_product_available");
+  });
+
+  test("returns an error given not enough deposit", async () => {
+    const response = await request(app)
+      .post("/buy")
+      .set("Authorization", await getBearerToken())
+      .send({
+        productId: productId,
+        amountOfProducts: 5,
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.statusCode).toBe(400);
+    expect(response.body.code).toBe("insufficient_funds");
   });
 });
 
@@ -50,7 +99,7 @@ const mockBuyer = {
   email: "buyer@gmail.com",
   password: buyerPassword,
   role: "buyer",
-  deposit: 100,
+  deposit: 1.2,
 };
 
 const productId = new mongoose.Types.ObjectId();
