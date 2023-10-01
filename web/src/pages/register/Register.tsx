@@ -1,78 +1,121 @@
 import { useState } from "react";
-import { Button, Card, Col, Input, Row, Space, Spin, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  Radio,
+  Row,
+  Space,
+  Spin,
+  Typography,
+  notification,
+} from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../providers/Auth";
+import { useNavigate } from "react-router-dom";
+import { useRegisterUser } from "../../hooks/useRegisterUser";
 
 const { Text } = Typography;
+
+const options = [
+  { label: "Buyer", value: "buyer" },
+  { label: "Seller", value: "seller" },
+];
 
 export const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [role, setRole] = useState<"buyer" | "seller">("buyer");
   const navigate = useNavigate();
-  const location = useLocation();
-  const auth = useAuthContext();
-
-  const from = location.state?.from?.pathname || "/";
+  const { register } = useRegisterUser();
+  const [api, contextHolder] = notification.useNotification();
 
   const handleOnClick = () => {
     setIsLoading(true);
-    // auth.login({ email, password }, () => {
-    //   // Send them back to the page they tried to visit
-    //   navigate(from, { replace: true });
-    // });
+    register({ email, password, role })
+      .then(() => {
+        api.success({
+          message:
+            "Successfully registered the user, now log in to start using the vending machine",
+          onClose: () => navigate("/login"),
+        });
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
-    <Row style={{ paddingTop: "15vh" }}>
-      <Col span={8} offset={8}>
-        <Card title="Register">
-          <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-            <Row align="middle">
-              <Col span={6}>
-                <Text>Email</Text>
-              </Col>
-              <Col span={18}>
-                <Input
-                  placeholder="myemail@gmail.com"
-                  value={email}
-                  size="large"
-                  prefix={<UserOutlined />}
-                  onChange={({ currentTarget }) =>
-                    setEmail(currentTarget.value)
-                  }
-                />
-              </Col>
-            </Row>
+    <Spin spinning={isLoading}>
+      <Row style={{ paddingTop: "15vh" }}>
+        {contextHolder}
+        <Col span={8} offset={8}>
+          <Card title="Register">
+            <Space
+              direction="vertical"
+              size="middle"
+              style={{ display: "flex" }}
+            >
+              <Row align="middle">
+                <Col span={6}>
+                  <Text>Email</Text>
+                </Col>
+                <Col span={18}>
+                  <Input
+                    placeholder="myemail@gmail.com"
+                    value={email}
+                    size="large"
+                    prefix={<UserOutlined />}
+                    onChange={({ currentTarget }) =>
+                      setEmail(currentTarget.value)
+                    }
+                  />
+                </Col>
+              </Row>
 
-            <Row align="middle">
-              <Col span={6}>
-                <Text>Password</Text>
-              </Col>
-              <Col span={18}>
-                <Input.Password
-                  value={password}
-                  size="large"
-                  prefix={<LockOutlined />}
-                  onChange={({ currentTarget }) =>
-                    setPassword(currentTarget.value)
-                  }
-                />
-              </Col>
-            </Row>
+              <Row align="middle">
+                <Col span={6}>
+                  <Text>Password</Text>
+                </Col>
+                <Col span={18}>
+                  <Input.Password
+                    value={password}
+                    size="large"
+                    prefix={<LockOutlined />}
+                    onChange={({ currentTarget }) =>
+                      setPassword(currentTarget.value)
+                    }
+                  />
+                </Col>
+              </Row>
 
-            <Row style={{ justifyContent: "flex-end" }}>
-              <Spin spinning={isLoading}>
-                <Button type="primary" onClick={handleOnClick}>
-                  Login
-                </Button>
-              </Spin>
-            </Row>
-          </Space>
-        </Card>
-      </Col>
-    </Row>
+              <Row align="middle">
+                <Col span={6}>
+                  <Text>Role</Text>
+                </Col>
+                <Col span={18}>
+                  <Radio.Group
+                    options={options}
+                    onChange={({ target }) => setRole(target.value)}
+                    value={role}
+                    optionType="button"
+                  />
+                </Col>
+              </Row>
+
+              <Row style={{ justifyContent: "flex-end" }}>
+                <Spin spinning={isLoading}>
+                  <Button type="primary" onClick={handleOnClick}>
+                    Register
+                  </Button>
+                </Spin>
+              </Row>
+            </Space>
+          </Card>
+        </Col>
+      </Row>
+    </Spin>
   );
 };
