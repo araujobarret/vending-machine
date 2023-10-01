@@ -5,7 +5,7 @@ import { useAuthContext } from "../providers/Auth";
 export const Nav: React.FC = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
 
   let items = unAuthenticatedItems;
   if (!!user) {
@@ -16,7 +16,14 @@ export const Nav: React.FC = () => {
     <Menu
       theme="dark"
       mode="horizontal"
-      onClick={({ key }) => navigate(`/${key}`)}
+      onClick={({ key }) => {
+        if (key !== "logout") {
+          navigate(`/${key}`);
+          return;
+        }
+        logout();
+        navigate("/login");
+      }}
       selectedKeys={[pathname.replace("/", "")]}
       items={items}
     />
@@ -31,10 +38,11 @@ const unAuthenticatedItems = [
 const buyerItems = [
   { key: "vending-machine", label: "Vending Machine" },
   { key: "users", label: "Users" },
+  { key: "logout", label: "Logout" },
 ];
 
 const sellerItems = [
-  { key: "vending-machine", label: "Vending Machine" },
   { key: "products", label: "Products" },
   { key: "users", label: "Users" },
+  { key: "logout", label: "Logout" },
 ];

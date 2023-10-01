@@ -4,7 +4,7 @@ import { Basket } from "../../components/Basket";
 import { VendingMachineProvider } from "../../providers/VendingMachineProvider";
 import { UserStatus } from "../../components/UserStatus";
 
-export const VendingMachine: React.FC = () => {
+export const VendingMachinePage: React.FC = () => {
   return (
     <VendingMachineProvider>
       <Row gutter={40}>

@@ -6,7 +6,7 @@ import { useAuthContext } from "../../providers/Auth";
 
 const { Text } = Typography;
 
-export const Register: React.FC = () => {
+export const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

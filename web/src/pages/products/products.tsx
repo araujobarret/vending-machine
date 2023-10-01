@@ -1,32 +1,29 @@
-// src/components/ProductList.tsx
-import React, { useEffect, useState } from "react";
-import { api } from "../../services/api";
-import { Button, Space } from "antd";
+import { useState } from "react";
+import { Products } from "../../components/Products";
+import { Product as ProductType } from "../../types/product";
+import { Button, Col, Row } from "antd";
+import { Product } from "../../components/Product";
+import { NewProduct } from "../../components/NewProduct";
 
-function ProductList() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await api.get("/products");
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    }
-
-    fetchProducts();
-  }, []);
-
-  // Render your product list here
+export const ProductsPage: React.FC = () => {
+  const [product, setProduct] = useState<ProductType | null>(null);
 
   return (
-    <Space>
-      <Button type="primary">Primary</Button>
-      <Button>Default</Button>
-    </Space>
-  );
-}
+    <Row gutter={40}>
+      <Col span={12} style={{ flex: 1 }}>
+        <Products withVendingActions={false} onEditProduct={setProduct} />
+        <Button type="primary" onClick={() => setProduct(null)}>
+          New
+        </Button>
+      </Col>
 
-export default ProductList;
+      <Col span={8} style={{ flex: 1 }}>
+        {!product ? (
+          <NewProduct />
+        ) : (
+          <Product product={product} onEdit={() => setProduct(null)} />
+        )}
+      </Col>
+    </Row>
+  );
+};

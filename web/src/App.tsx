@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Layout } from "antd";
-import Products from "./pages/products/products";
 import { Nav } from "./components/Nav";
-import { AuthProvider } from "./providers/Auth";
-import { Login } from "./pages/login/Login";
-import { Register } from "./pages/register/Register";
 import { RequireAuth } from "./components/RequireAuth";
-import { VendingMachine } from "./pages/vending-machine/VendingMachine";
+import { AuthProvider } from "./providers/Auth";
+import { LoginPage } from "./pages/login/Login";
+import { RegisterPage } from "./pages/register/Register";
+import { VendingMachinePage } from "./pages/vending-machine/VendingMachine";
+import { ProductsPage } from "./pages/products/products";
 
 const { Content, Header } = Layout;
 
@@ -22,24 +22,16 @@ function App() {
           <Content style={{ padding: "0 50px", height: "100%" }}>
             <Routes>
               <Route
-                path="/"
-                element={
-                  <RequireAuth>
-                    <VendingMachine />
-                  </RequireAuth>
-                }
-              />
-              <Route
                 path="/vending-machine"
                 element={
                   <RequireAuth>
-                    <VendingMachine />
+                    <VendingMachinePage />
                   </RequireAuth>
                 }
               />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/products" Component={Products} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/products" element={<ProductsPage />} />
             </Routes>
           </Content>
         </Layout>

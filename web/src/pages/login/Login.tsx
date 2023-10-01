@@ -19,7 +19,7 @@ import { AxiosResponse } from "axios";
 
 const { Text } = Typography;
 
-export const Login: React.FC = () => {
+export const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

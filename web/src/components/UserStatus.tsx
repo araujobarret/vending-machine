@@ -59,14 +59,18 @@ export const UserStatus: React.FC = () => {
           <Text>Credit: {user?.deposit.toFixed(2)}</Text>
         </Row>
 
-        <Divider orientation="left">Coins</Divider>
+        <Divider orientation="left">Deposit Coins</Divider>
         <Space size={[8, 8]} wrap>
           {[100, 50, 20, 10, 5].map((coin) => (
-            <Button type="primary" danger onClick={() => handleCoinClick(coin)}>
+            <Button type="primary" onClick={() => handleCoinClick(coin)}>
               {coin}
             </Button>
           ))}
         </Space>
+        <Divider orientation="left">More functions</Divider>
+        <Button type="primary" danger>
+          Reset coins
+        </Button>
       </Spin>
     </Card>
   );

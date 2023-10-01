@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   let logout = (callback?: VoidFunction) => {
     setUser(null);
+    deleteLocalStorageUser();
     callback?.();
   };
 
@@ -51,4 +52,8 @@ const getLocalStorageUser = (): UserWithToken | null => {
   } catch (e) {
     return null;
   }
+};
+
+const deleteLocalStorageUser = () => {
+  localStorage.removeItem(STORAGE_KEY);
 };

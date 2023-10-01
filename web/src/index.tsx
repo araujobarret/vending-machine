@@ -13,7 +13,7 @@ root.render(
         token: {
           colorPrimary: "#1f6ae3",
           borderRadius: 2,
-          colorBgContainer: "#e3e3e3",
+          colorBgContainer: "#f7f7f7",
         },
       }}
     >

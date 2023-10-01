@@ -4,7 +4,15 @@ import { ColumnsType } from "antd/es/table";
 import { useVendingMachineContext } from "../providers/VendingMachineProvider";
 import { useProducts } from "../hooks/useProducts";
 
-export const Products: React.FC = () => {
+interface ProductsProps {
+  withVendingActions?: boolean;
+  onEditProduct?: (product: Product) => void;
+}
+
+export const Products: React.FC<ProductsProps> = ({
+  withVendingActions = true,
+  onEditProduct,
+}) => {
   const { products, isLoading } = useProducts();
 
   if (products?.length === 0 && !isLoading) {
@@ -13,7 +21,29 @@ export const Products: React.FC = () => {
 
   return (
     <Spin spinning={isLoading}>
-      <Table dataSource={products ?? []} columns={columns} pagination={false} />
+      {withVendingActions ? (
+        <Table
+          dataSource={products ?? []}
+          rowKey={(p) => p._id}
+          columns={columnsWithVendingActions}
+          pagination={false}
+        />
+      ) : (
+        <Table
+          dataSource={products ?? []}
+          columns={columns}
+          pagination={false}
+          rowKey={(p) => p._id}
+          rowSelection={{
+            type: "radio",
+            onChange: (_, selectedRows) => {
+              if (selectedRows.length > 0) {
+                onEditProduct?.(selectedRows[0]);
+              }
+            },
+          }}
+        />
+      )}
     </Spin>
   );
 };
@@ -26,6 +56,10 @@ const columns: ColumnsType<Product> = [
     dataIndex: "amountAvailable",
     key: "amountAvailable",
   },
+];
+
+const columnsWithVendingActions: ColumnsType<Product> = [
+  ...columns,
   {
     title: "Add",
     key: "addToOrder",
