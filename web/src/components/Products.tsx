@@ -1,29 +1,20 @@
-import { useEffect, useState } from "react";
-import { api } from "../services/api";
 import { Product } from "../types/product";
-import { Button, Table } from "antd";
+import { Button, Empty, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useVendingMachineContext } from "../providers/VendingMachineProvider";
+import { useProducts } from "../hooks/useProducts";
 
 export const Products: React.FC = () => {
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const { products, isLoading } = useProducts();
 
-  const hasProducts = products !== null;
-
-  useEffect(() => {
-    if (!hasProducts) {
-      api.get<Product[]>("/products").then(({ data }) => setProducts(data));
-    }
-  }, [hasProducts]);
-
-  if (!hasProducts) {
-    return null;
+  if (products?.length === 0 && !isLoading) {
+    return <Empty />;
   }
 
   return (
-    <>
-      <Table dataSource={products} columns={columns} pagination={false} />
-    </>
+    <Spin spinning={isLoading}>
+      <Table dataSource={products ?? []} columns={columns} pagination={false} />
+    </Spin>
   );
 };
 

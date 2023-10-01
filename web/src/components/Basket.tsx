@@ -3,11 +3,13 @@ import { useVendingMachineContext } from "../providers/VendingMachineProvider";
 import { useBuy } from "../hooks/useBuy";
 import { useState } from "react";
 import { useUser } from "../hooks/useUser";
+import { useProducts } from "../hooks/useProducts";
 
 const { Text } = Typography;
 
 export const Basket: React.FC = () => {
   const { user, mutateUser } = useUser();
+  const { products, mutateProducts } = useProducts();
   const [isLoading, setIsLoading] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   const { total, amountOfProducts, userDeposit, product, reset } =
@@ -26,13 +28,24 @@ export const Basket: React.FC = () => {
     buy({ productId: product._id, amountOfProducts })
       .then(({ data }) => {
         mutateUser({ ...user!, deposit: user!.deposit - data.total });
+        mutateProducts(
+          products?.map((p) => {
+            if (p._id === product._id) {
+              return {
+                ...p,
+                amountAvailable: p.amountAvailable - amountOfProducts,
+              };
+            }
+            return p;
+          })
+        );
         reset();
         api.success({
           duration: 5,
           message: "Success",
-          description: `You completed your order of total ${data.total.toFixed(
+          description: `You've completed your order of total ${data.total.toFixed(
             2
-          )} and received the change in coins: ${data.change}`,
+          )} and received the change in coins: ${data.change}.`,
         });
       })
       .catch((e) => {
