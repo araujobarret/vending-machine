@@ -38,16 +38,15 @@ router.post(
 
       try {
         // TODO: check for already logged-in session
-        const { accessToken, jwtid } = createAccessToken(user);
+        const { accessToken, jwtid, exp } = createAccessToken(user);
         await userModel.findOneAndUpdate(
           { _id: user.id },
           { $set: { activeTokenId: jwtid } }
         );
 
-        return res.status(200).send(accessToken);
+        return res.status(200).send({ accessToken, exp });
       } catch (e) {
-        console.error("[POST /login]", e);
-        return res.status(400).send({ message: "Login has failed" });
+        return res.status(500).send({ message: "Login has failed" });
       }
     }
 
@@ -60,7 +59,7 @@ router.post("/logout/all", auth, async (_, res: Response) => {
     await unsetActiveTokenId(res.locals?.user?.id);
     return res.sendStatus(200);
   } catch (e) {
-    return res.status(400).send({ message: "Logout has failed" });
+    return res.status(500).send({ message: "Logout has failed" });
   }
 });
 

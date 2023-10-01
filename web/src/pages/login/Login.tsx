@@ -1,7 +1,18 @@
-import { useState } from "react";
-import { Button, Card, Col, Input, Row, Space, Spin, Typography } from "antd";
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  Row,
+  Space,
+  Spin,
+  Typography,
+  message,
+} from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
+import { api } from "../../services/api";
 import { useAuthContext } from "../../providers/Auth";
 
 const { Text } = Typography;
@@ -11,22 +22,40 @@ export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const location = useLocation();
-  const auth = useAuthContext();
+  const { isAuthenticated, login } = useAuthContext();
 
   const from = location.state?.from?.pathname || "/";
 
-  const handleOnClick = () => {
-    setIsLoading(true);
-    auth.login(email, () => {
+  useEffect(() => {
+    if (isAuthenticated) {
       // Send them back to the page they tried to visit
       navigate(from, { replace: true });
-    });
+    }
+  }, [isAuthenticated, navigate, from]);
+
+  const handleOnClick = async () => {
+    setIsLoading(true);
+    try {
+      const data = await api.post<
+        { email: string; password: string },
+        { accessToken: string; exp: number }
+      >("/login", { email, password });
+      login({ email, accessToken: data.accessToken });
+    } catch (e) {
+      messageApi.error("Invalid credentials");
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <Row style={{ paddingTop: "15vh" }}>
+      {contextHolder}
+
       <Col span={8} offset={8}>
         <Card title="Login">
           <Space direction="vertical" size="middle" style={{ display: "flex" }}>

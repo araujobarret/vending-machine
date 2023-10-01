@@ -5,7 +5,7 @@ import { useAuthContext } from "../providers/Auth";
 export const Nav: React.FC = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
 
   return (
     <Menu
@@ -13,7 +13,7 @@ export const Nav: React.FC = () => {
       mode="horizontal"
       onClick={({ key }) => navigate(`/${key}`)}
       selectedKeys={[pathname.replace("/", "")]}
-      items={user ? sellerItems : buyerItems}
+      items={isAuthenticated ? sellerItems : buyerItems}
     />
   );
 };

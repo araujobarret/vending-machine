@@ -11,11 +11,8 @@ root.render(
     <ConfigProvider
       theme={{
         token: {
-          // Seed Token
           colorPrimary: "#1f6ae3",
           borderRadius: 2,
-
-          // Alias Token
           colorBgContainer: "#f0f0f0",
         },
       }}

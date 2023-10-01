@@ -17,12 +17,16 @@ export const createAccessToken = (user: Pick<UserPayload, "id" | "email">) => {
     },
   };
   const uuid = randomUUID();
+  const date = new Date();
+  // don't care about the slight seconds diff from original exp
+  const exp = date.setDate(date.getDate() + 7);
   return {
     accessToken: jwt.sign(payload, JWT_SECRET, {
       expiresIn: "7d",
       jwtid: uuid,
     }),
     jwtid: uuid,
+    exp,
   };
 };
 

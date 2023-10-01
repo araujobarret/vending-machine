@@ -19,10 +19,10 @@ export const Register: React.FC = () => {
 
   const handleOnClick = () => {
     setIsLoading(true);
-    auth.login(email, () => {
-      // Send them back to the page they tried to visit
-      navigate(from, { replace: true });
-    });
+    // auth.login({ email, password }, () => {
+    //   // Send them back to the page they tried to visit
+    //   navigate(from, { replace: true });
+    // });
   };
 
   return (

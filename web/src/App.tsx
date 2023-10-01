@@ -3,9 +3,9 @@ import { Layout } from "antd";
 import Products from "./pages/products/products";
 import { Nav } from "./components/Nav";
 import { AuthProvider } from "./providers/Auth";
-import { RequireAuth } from "./components/RequireAuth";
 import { Login } from "./pages/login/Login";
 import { Register } from "./pages/register/Register";
+import { RequireAuth } from "./components/RequireAuth";
 
 const { Content, Header } = Layout;
 
