@@ -1,9 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import { body, validationResult } from "express-validator";
-import bcrypt from "bcrypt";
 import { auth } from "../middleware/auth";
-import { userModel } from "../models/user";
-import { createAccessToken } from "../services/auth";
+import { isAuthServiceError, login } from "../services/auth";
 import { unsetActiveTokenId } from "../services/user";
 
 const router: Router = express.Router();
@@ -24,27 +22,14 @@ router.post(
     const errors = validationResult(req);
 
     if (errors.isEmpty()) {
-      const { email, password } = req.body;
-
-      const user = await userModel.findOne({ email });
-      if (!user) {
-        return res.sendStatus(400);
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
-
       try {
-        // TODO: check for already logged-in session
-        const { accessToken, jwtid, exp } = createAccessToken(user);
-        await userModel.findOneAndUpdate(
-          { _id: user.id },
-          { $set: { activeTokenId: jwtid } }
-        );
+        const userOrError = await login(req.body);
 
-        return res.status(200).send({ accessToken, exp });
+        if (isAuthServiceError(userOrError)) {
+          return res.status(userOrError.statusCode).send(userOrError);
+        }
+
+        return res.status(200).send(userOrError);
       } catch (e) {
         return res.status(500).send({ message: "Login has failed" });
       }

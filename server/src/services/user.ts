@@ -1,4 +1,4 @@
-import { Role, UserPayload, userModel } from "../models/user";
+import { Role, User, UserPayload, userModel } from "../models/user";
 import { convertCentsToFloat } from "../utils/money";
 
 export const saveUser = async ({
@@ -14,12 +14,7 @@ export const saveUser = async ({
 
   const data = await user.save();
 
-  return {
-    id: data.id,
-    email: data.email,
-    role: data.role,
-    deposit: data.deposit,
-  };
+  return getUserPayload(user);
 };
 
 export const unsetActiveTokenId = async (id: string) => {
@@ -40,12 +35,7 @@ export const getUser = async (id: string): Promise<UserPayload | null> => {
     return null;
   }
 
-  return {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    deposit: user.deposit,
-  };
+  return getUserPayload(user);
 };
 
 export const incrementUserDeposit = async ({
@@ -67,12 +57,7 @@ export const incrementUserDeposit = async ({
     return null;
   }
 
-  return {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    deposit: user.deposit,
-  };
+  return getUserPayload(user);
 };
 
 export const resetUserDeposit = async (
@@ -90,6 +75,10 @@ export const resetUserDeposit = async (
     return null;
   }
 
+  return getUserPayload(user);
+};
+
+export const getUserPayload = (user: User) => {
   return {
     id: user.id,
     email: user.email,

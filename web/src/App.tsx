@@ -6,6 +6,7 @@ import { AuthProvider } from "./providers/Auth";
 import { Login } from "./pages/login/Login";
 import { Register } from "./pages/register/Register";
 import { RequireAuth } from "./components/RequireAuth";
+import { VendingMachine } from "./pages/vending-machine/VendingMachine";
 
 const { Content, Header } = Layout;
 
@@ -24,7 +25,7 @@ function App() {
                 path="/"
                 element={
                   <RequireAuth>
-                    <div>Vending Machine</div>
+                    <VendingMachine />
                   </RequireAuth>
                 }
               />
@@ -32,7 +33,7 @@ function App() {
                 path="/vending-machine"
                 element={
                   <RequireAuth>
-                    <div>Vending Machine</div>
+                    <VendingMachine />
                   </RequireAuth>
                 }
               />

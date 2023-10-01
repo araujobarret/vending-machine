@@ -14,6 +14,8 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import { useAuthContext } from "../../providers/Auth";
+import { LoginBody, LoginPayload } from "../../types/user";
+import { AxiosResponse } from "axios";
 
 const { Text } = Typography;
 
@@ -39,11 +41,14 @@ export const Login: React.FC = () => {
   const handleOnClick = async () => {
     setIsLoading(true);
     try {
-      const data = await api.post<
-        { email: string; password: string },
-        { accessToken: string; exp: number }
-      >("/login", { email, password });
-      login({ email, accessToken: data.accessToken });
+      const res = await api.post<LoginBody, AxiosResponse<LoginPayload>>(
+        "/login",
+        {
+          email,
+          password,
+        }
+      );
+      login({ ...res.data.user, accessToken: res.data.accessToken });
     } catch (e) {
       messageApi.error("Invalid credentials");
       console.error(e);
