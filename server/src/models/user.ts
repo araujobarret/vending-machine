@@ -1,5 +1,6 @@
 import { Document, model, Schema } from "mongoose";
 import { createPasswordHash } from "../services/auth";
+import { productModel } from "./product";
 
 export type Role = "buyer" | "seller";
 export const roles: Role[] = ["buyer", "seller"];
@@ -42,16 +43,23 @@ const userSchema = new Schema<User>({
 });
 
 userSchema.pre("save", function (next) {
-  var user = this;
+  const user = this;
 
   try {
     user.password = createPasswordHash(user.password);
     next();
   } catch (e) {
-    throw new Error("Internal error");
+    throw new Error("Internal server error");
   }
 });
 
-// TODO: cascade delete product when deleting a seller
+userSchema.post("findOneAndDelete", async function (doc) {
+  try {
+    await productModel.deleteMany({ sellerId: doc._id });
+  } catch (e) {
+    console.error(e);
+    throw new Error("Internal server error");
+  }
+});
 
 export const userModel = model<User>("user", userSchema);
