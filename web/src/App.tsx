@@ -5,7 +5,7 @@ import { RequireAuth } from "./components/RequireAuth";
 import { LoginPage } from "./pages/login/Login";
 import { RegisterPage } from "./pages/register/Register";
 import { VendingMachinePage } from "./pages/vending-machine/VendingMachine";
-import { ProductsPage } from "./pages/products/products";
+import { ProductsPage } from "./pages/products/Products";
 import { useAuthContext } from "./providers/Auth";
 import { UserPage } from "./pages/user/User";
 

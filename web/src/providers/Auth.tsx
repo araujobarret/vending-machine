@@ -1,11 +1,12 @@
 import React from "react";
-import { UserWithToken } from "../types/user";
+import { UserRole, UserWithToken } from "../types/user";
 
 interface AuthContextType {
   user: UserWithToken | null;
   isAuthenticated: boolean;
   login: (user: UserWithToken, callback?: VoidFunction) => void;
   logout: (callback?: VoidFunction) => void;
+  changeUserRole: (role: UserRole) => void;
 }
 
 let AuthContext = React.createContext<AuthContextType>(null!);
@@ -30,7 +31,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     callback?.();
   };
 
-  let value = { user, isAuthenticated, login, logout };
+  let changeUserRole = (role: UserRole) => {
+    if (!user || role === user.role) {
+      return;
+    }
+
+    const newUser = { ...user, role };
+    setLocalStorageUser(newUser);
+    setUser(newUser);
+  };
+
+  let value = { user, isAuthenticated, login, logout, changeUserRole };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { useUser } from "../../hooks/useUser";
 import { RolesToggle } from "../../components/RolesToggle";
-import { User, UserRole } from "../../types/user";
+import { User } from "../../types/user";
 import { useUpdateUser } from "./hooks/useUpdateUser";
 
 const { Text } = Typography;
@@ -53,7 +53,7 @@ export const UserPage: React.FC = () => {
       {contextHolder}
       <Col span={12}>
         <Card title="Personal Information">
-          <Divider orientation="left">Fixed Information</Divider>
+          <Divider orientation="left">Information</Divider>
 
           <Row>
             <Col span={4}>
@@ -72,7 +72,7 @@ export const UserPage: React.FC = () => {
           </Row>
 
           <Spin spinning={isLoading}>
-            <Divider orientation="left">Editable Section</Divider>
+            <Divider orientation="left">Edit</Divider>
 
             <Row>
               <Col span={6}>Role</Col>
@@ -102,7 +102,7 @@ export const UserPage: React.FC = () => {
             </Row>
 
             <Row style={{ marginTop: "20px" }}>
-              <Button type="primary" onClick={onSubmit}>
+              <Button type="primary" onClick={onSubmit} disabled={!isTouched}>
                 Save
               </Button>
             </Row>

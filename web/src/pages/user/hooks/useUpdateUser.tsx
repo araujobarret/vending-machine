@@ -13,7 +13,7 @@ type UpdateUserBody = {
 export const useUpdateUser = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, mutateUser } = useUser();
-  const { user: userContext } = useAuthContext();
+  const { user: userContext, changeUserRole } = useAuthContext();
 
   const updateUser = async (body: UpdateUserBody) => {
     if (!user || !userContext) {
@@ -28,6 +28,7 @@ export const useUpdateUser = () => {
       >(`/user/${user.id}`, body);
       setIsLoading(false);
       mutateUser({ ...user, role: data.role, deposit: data.deposit });
+      changeUserRole(data.role);
       return data;
     } catch (e) {
       console.error(e);

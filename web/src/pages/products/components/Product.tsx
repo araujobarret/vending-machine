@@ -50,6 +50,7 @@ export const Product: React.FC<ProductProps> = ({
     const data = await deleteProduct();
     if (data) {
       api.success({ message: "Product removed with success." });
+      onChange();
     } else {
       api.success({ message: "Error removing the product." });
     }
