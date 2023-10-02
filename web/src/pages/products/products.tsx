@@ -11,7 +11,7 @@ export const ProductsPage: React.FC = () => {
   return (
     <Row gutter={40}>
       <Col span={12} style={{ flex: 1 }}>
-        <Products withVendingActions={false} onEditProduct={setProduct} />
+        <Products withVendingActions={false} onSelectProduct={setProduct} />
         <Button type="primary" onClick={() => setProduct(null)}>
           New
         </Button>
@@ -21,7 +21,7 @@ export const ProductsPage: React.FC = () => {
         {!product ? (
           <NewProduct />
         ) : (
-          <Product product={product} onEdit={() => setProduct(null)} />
+          <Product product={product} onChange={() => setProduct(null)} />
         )}
       </Col>
     </Row>

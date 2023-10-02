@@ -6,12 +6,12 @@ import { useProducts } from "../hooks/useProducts";
 
 interface ProductsProps {
   withVendingActions?: boolean;
-  onEditProduct?: (product: Product) => void;
+  onSelectProduct?: (product: Product) => void;
 }
 
 export const Products: React.FC<ProductsProps> = ({
   withVendingActions = true,
-  onEditProduct,
+  onSelectProduct,
 }) => {
   const { products, isLoading } = useProducts();
 
@@ -24,7 +24,7 @@ export const Products: React.FC<ProductsProps> = ({
       {withVendingActions ? (
         <Table
           dataSource={products ?? []}
-          rowKey={(p) => p._id}
+          rowKey={(p) => p._id ?? p.id}
           columns={columnsWithVendingActions}
           pagination={false}
         />
@@ -33,12 +33,12 @@ export const Products: React.FC<ProductsProps> = ({
           dataSource={products ?? []}
           columns={columns}
           pagination={false}
-          rowKey={(p) => p._id}
+          rowKey={(p) => p._id ?? p.id}
           rowSelection={{
             type: "radio",
             onChange: (_, selectedRows) => {
               if (selectedRows.length > 0) {
-                onEditProduct?.(selectedRows[0]);
+                onSelectProduct?.(selectedRows[0]);
               }
             },
           }}

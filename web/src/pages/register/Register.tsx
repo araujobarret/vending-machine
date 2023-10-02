@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useRegisterUser } from "../../hooks/useRegisterUser";
+import { useRegisterUser } from "./hooks/useRegisterUser";
 
 const { Text } = Typography;
 

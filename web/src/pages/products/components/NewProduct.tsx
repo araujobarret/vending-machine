@@ -12,47 +12,36 @@ import {
 import { CheckOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useSaveProduct } from "../hooks/useSaveProduct";
-import { useProducts } from "../../../hooks/useProducts";
 
 export const NewProduct: React.FC = () => {
   const [name, setName] = useState("");
   const [cost, setCost] = useState(0);
   const [amount, setAmount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const { saveProduct } = useSaveProduct();
+  const { saveProduct, isSaveLoading } = useSaveProduct();
   const [api, contextHolder] = notification.useNotification();
-  const { mutateProducts, products } = useProducts();
 
   const isValid = name.length > 1 && cost > 0 && amount > 0;
 
-  const onSubmit = () => {
-    setIsLoading(true);
-    saveProduct({
+  const onSubmit = async () => {
+    const data = await saveProduct({
       productName: name,
       cost,
       amountAvailable: amount,
-    })
-      .then(({ data }) => {
-        mutateProducts([...products!, data]);
-        setName("");
-        setCost(0);
-        setAmount(0);
-        api.success({ message: "Success" });
-      })
-      .catch((e) => {
-        console.error(e);
-        api.error({
-          message: "Error",
-          description: e?.message,
-        });
-      })
-      .finally(() => setIsLoading(false));
+    });
+    if (data) {
+      setName("");
+      setCost(0);
+      setAmount(0);
+      api.success({ message: "Success" });
+    } else {
+      api.error({ message: "Error saving the product" });
+    }
   };
 
   return (
     <Card title="New Product">
       {contextHolder}
-      <Spin spinning={isLoading}>
+      <Spin spinning={isSaveLoading}>
         <Space size={[10, 10]} direction="vertical">
           <Row>
             <Col span={12}>Product Name</Col>

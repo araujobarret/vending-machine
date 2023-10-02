@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -10,92 +11,72 @@ import {
   notification,
 } from "antd";
 import { DeleteOutlined, CheckOutlined } from "@ant-design/icons";
-
 import { Product as ProductType } from "../../../types/product";
 import { useUser } from "../../../hooks/useUser";
-import { useState } from "react";
-import { useEditProduct } from "../hooks/useEditProduct";
-import { useProducts } from "../../../hooks/useProducts";
+import { useUpdateProduct } from "../hooks/useUpdateProduct";
 import { useDeleteProduct } from "../hooks/useDeleteProduct";
 interface ProductProps {
   product: ProductType;
-  onEdit: () => void;
+  onChange: () => void;
 }
 
 export const Product: React.FC<ProductProps> = ({
-  product,
-  onEdit: onEditCallback,
+  product: productProp,
+  onChange,
 }) => {
-  const [name, setName] = useState(product.productName);
-  const [cost, setCost] = useState(product.cost);
-  const [amount, setAmount] = useState(product.amountAvailable);
-  const [isLoading, setIsLoading] = useState(false);
+  const [product, setProduct] = useState(() => productProp);
+
   const { user } = useUser();
-  const { editProduct } = useEditProduct();
-  const { deleteProduct } = useDeleteProduct();
+  const { updateProduct, isUpdateLoading } = useUpdateProduct();
+  const { deleteProduct, isDeleteLoading } = useDeleteProduct(productProp);
   const [api, contextHolder] = notification.useNotification();
-  const { mutateProducts, products } = useProducts();
 
   const isTouched =
-    product.cost !== cost ||
-    product.amountAvailable !== amount ||
-    product.productName !== name;
-  const isValid = cost > 0 && amount > 0 && name.length > 1;
+    productProp.cost !== product.cost ||
+    productProp.amountAvailable !== product.amountAvailable ||
+    productProp.productName !== product.productName;
+  const isValid =
+    product.cost > 0 &&
+    product.amountAvailable > 0 &&
+    product.productName.length > 1;
 
-  const onDelete = () => {
-    setIsLoading(true);
-    deleteProduct(product._id)
-      .then(() => {
-        mutateProducts(products?.filter((p) => p._id !== product._id));
-        api.success({ message: "Product removed with success" });
-        onEditCallback();
-      })
-      .catch((e) => {})
-      .finally(() => setIsLoading(false));
+  useEffect(() => {
+    if (productProp._id !== product._id) {
+      setProduct(productProp);
+    }
+  }, [product, productProp]);
+
+  const onDelete = async () => {
+    const data = await deleteProduct();
+    if (data) {
+      api.success({ message: "Product removed with success." });
+    } else {
+      api.success({ message: "Error removing the product." });
+    }
   };
 
-  const onEdit = () => {
-    setIsLoading(true);
-    editProduct(
-      { productName: name, cost, amountAvailable: amount },
-      product._id
-    )
-      .then(({ data }) => {
-        mutateProducts(
-          products?.map((p) => {
-            if (p._id === data.id) {
-              return {
-                ...p,
-                ...data,
-              };
-            }
-            return p;
-          })
-        );
-        api.success({ message: "Success" });
-        onEditCallback();
-      })
-      .catch((e) => {
-        api.error({
-          message: "Error",
-          description: e?.message,
-        });
-        console.error(e);
-      })
-      .finally(() => setIsLoading(false));
+  const onEdit = async () => {
+    const data = await updateProduct(product);
+    if (data) {
+      api.success({ message: "Success updating the product" });
+    } else {
+      api.error({ message: "Error updating the product" });
+    }
   };
 
   return (
-    <Card title={product.productName}>
+    <Card title="Edit Product">
       {contextHolder}
-      <Spin spinning={isLoading}>
+      <Spin spinning={isUpdateLoading || isDeleteLoading}>
         <Space size={[10, 10]} direction="vertical">
           <Row>
             <Col span={12}>Product Name</Col>
             <Col span={12}>
               <Input
-                onChange={({ currentTarget }) => setName(currentTarget.value)}
-                value={name}
+                onChange={({ currentTarget }) =>
+                  setProduct({ ...product, productName: currentTarget.value })
+                }
+                value={product.productName}
               />
             </Col>
           </Row>
@@ -107,10 +88,10 @@ export const Product: React.FC<ProductProps> = ({
                 step="0.05"
                 min="0.05"
                 max="999.99"
-                value={cost.toString()}
+                value={product.cost.toString()}
                 onChange={(value) => {
                   if (value) {
-                    setCost(parseFloat(value));
+                    setProduct({ ...product, cost: parseFloat(value) });
                   }
                 }}
               />
@@ -124,10 +105,13 @@ export const Product: React.FC<ProductProps> = ({
                 min="1"
                 max="999"
                 step="1"
-                value={amount.toString()}
+                value={product.amountAvailable.toString()}
                 onChange={(value) => {
                   if (value) {
-                    setAmount(parseInt(value));
+                    setProduct({
+                      ...product,
+                      amountAvailable: parseInt(value),
+                    });
                   }
                 }}
               />
@@ -144,7 +128,7 @@ export const Product: React.FC<ProductProps> = ({
               >
                 Save
               </Button>
-              {user?.id === product.sellerId && (
+              {user?.id === productProp.sellerId && (
                 <Button
                   danger
                   type="default"

@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
-import { api } from "../services/api";
-import { User } from "../types/user";
+import { api } from "../../../services/api";
+import { User } from "../../../types/user";
 
 type UserBody = {
   email: string;
