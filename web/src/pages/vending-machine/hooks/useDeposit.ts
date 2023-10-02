@@ -42,5 +42,21 @@ export const useDeposit = () => {
     }
   };
 
-  return { deposit, isLoading };
+  const reset = async () => {
+    try {
+      const { data } = await apiWithToken(userContext?.accessToken!).post<
+        {},
+        AxiosResponse<User>
+      >("/reset");
+      mutateUser({ ...user!, deposit: data.deposit });
+      setIsLoading(false);
+      return data;
+    } catch (e) {
+      console.error(e);
+      setIsLoading(false);
+      return null;
+    }
+  };
+
+  return { deposit, reset, isLoading };
 };

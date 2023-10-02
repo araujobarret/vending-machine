@@ -15,7 +15,7 @@ const { Text } = Typography;
 
 export const UserStatus: React.FC = () => {
   const { user } = useUser();
-  const { deposit, isLoading } = useDeposit();
+  const { deposit, reset, isLoading } = useDeposit();
   const [api, contextHolder] = notification.useNotification();
 
   const handleCoinClick = async (coin: number) => {
@@ -30,6 +30,15 @@ export const UserStatus: React.FC = () => {
         message: "Error",
         description: "Error depositing the coin, try again.",
       });
+    }
+  };
+
+  const handleResetClick = async () => {
+    const data = await reset();
+    if (data) {
+      api.success({ message: "Success" });
+    } else {
+      api.error({ message: "Error" });
     }
   };
 
@@ -54,7 +63,7 @@ export const UserStatus: React.FC = () => {
           ))}
         </Space>
         <Divider orientation="left">More functions</Divider>
-        <Button type="primary" danger>
+        <Button type="primary" danger onClick={handleResetClick}>
           Reset coins
         </Button>
       </Spin>
