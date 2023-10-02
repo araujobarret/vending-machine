@@ -17,6 +17,27 @@ export const saveUser = async ({
   return getUserPayload(user);
 };
 
+export const updateUser = async ({
+  id,
+  deposit,
+  role,
+}: {
+  id: string;
+  deposit: number;
+  role: Role;
+}) => {
+  const user = await userModel.findOneAndUpdate(
+    { _id: id },
+    { $set: { deposit, role } },
+    { new: true }
+  );
+  if (!user) {
+    return null;
+  }
+
+  return getUserPayload(user);
+};
+
 export const unsetActiveTokenId = async (id: string) => {
   await userModel.findOneAndUpdate(
     { _id: id },
@@ -30,7 +51,6 @@ export const deleteUser = (id: string) => {
 
 export const getUser = async (id: string): Promise<UserPayload | null> => {
   const user = await userModel.findOne({ _id: id });
-
   if (!user) {
     return null;
   }

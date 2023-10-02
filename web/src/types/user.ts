@@ -12,9 +12,11 @@ export interface User {
   id: string;
   email: string;
   deposit: number;
-  role: "seller" | "buyer";
+  role: UserRole;
 }
 
 export interface UserWithToken extends User {
   accessToken: string;
 }
+
+export type UserRole = "seller" | "buyer";

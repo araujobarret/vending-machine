@@ -4,7 +4,6 @@ import {
   Card,
   Col,
   Input,
-  Radio,
   Row,
   Space,
   Spin,
@@ -14,19 +13,16 @@ import {
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useRegisterUser } from "./hooks/useRegisterUser";
+import { RolesToggle } from "../../components/RolesToggle";
+import { UserRole } from "../../types/user";
 
 const { Text } = Typography;
-
-const options = [
-  { label: "Buyer", value: "buyer" },
-  { label: "Seller", value: "seller" },
-];
 
 export const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"buyer" | "seller">("buyer");
+  const [role, setRole] = useState<UserRole>("buyer");
   const navigate = useNavigate();
   const { register } = useRegisterUser();
   const [api, contextHolder] = notification.useNotification();
@@ -96,12 +92,7 @@ export const RegisterPage: React.FC = () => {
                   <Text>Role</Text>
                 </Col>
                 <Col span={18}>
-                  <Radio.Group
-                    options={options}
-                    onChange={({ target }) => setRole(target.value)}
-                    value={role}
-                    optionType="button"
-                  />
+                  <RolesToggle role={role} onSelect={setRole} />
                 </Col>
               </Row>
 

@@ -37,12 +37,12 @@ const unAuthenticatedItems = [
 
 const buyerItems = [
   { key: "/", label: "Vending Machine" },
-  { key: "/users", label: "Users" },
+  { key: "/user", label: "User" },
   { key: "/logout", label: "Logout" },
 ];
 
 const sellerItems = [
   { key: "/", label: "Products" },
-  { key: "/users", label: "Users" },
+  { key: "/user", label: "User" },
   { key: "/logout", label: "Logout" },
 ];

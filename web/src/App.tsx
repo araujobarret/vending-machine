@@ -7,6 +7,7 @@ import { RegisterPage } from "./pages/register/Register";
 import { VendingMachinePage } from "./pages/vending-machine/VendingMachine";
 import { ProductsPage } from "./pages/products/products";
 import { useAuthContext } from "./providers/Auth";
+import { UserPage } from "./pages/user/User";
 
 const { Content, Header } = Layout;
 
@@ -70,6 +71,15 @@ const BuyerRoutes: React.FC = () => {
           </RequireAuth>
         }
       />
+      <Route
+        path="/user"
+        index
+        element={
+          <RequireAuth>
+            <UserPage />
+          </RequireAuth>
+        }
+      />
     </Routes>
   );
 };
@@ -92,6 +102,15 @@ const SellerRoutes: React.FC = () => {
         element={
           <RequireAuth>
             <ProductsPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/user"
+        index
+        element={
+          <RequireAuth>
+            <UserPage />
           </RequireAuth>
         }
       />
