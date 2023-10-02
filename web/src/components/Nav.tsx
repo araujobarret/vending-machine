@@ -17,32 +17,32 @@ export const Nav: React.FC = () => {
       theme="dark"
       mode="horizontal"
       onClick={({ key }) => {
-        if (key !== "logout") {
-          navigate(`/${key}`);
+        if (key !== "/logout") {
+          navigate(`${key}`);
           return;
         }
         logout();
-        navigate("/login");
+        navigate("/");
       }}
-      selectedKeys={[pathname.replace("/", "")]}
+      selectedKeys={[pathname]}
       items={items}
     />
   );
 };
 
 const unAuthenticatedItems = [
-  { key: "login", label: "Login" },
-  { key: "register", label: "Register" },
+  { key: "/", label: "Login" },
+  { key: "/register", label: "Register" },
 ];
 
 const buyerItems = [
-  { key: "vending-machine", label: "Vending Machine" },
-  { key: "users", label: "Users" },
-  { key: "logout", label: "Logout" },
+  { key: "/", label: "Vending Machine" },
+  { key: "/users", label: "Users" },
+  { key: "/logout", label: "Logout" },
 ];
 
 const sellerItems = [
-  { key: "products", label: "Products" },
-  { key: "users", label: "Users" },
-  { key: "logout", label: "Logout" },
+  { key: "/", label: "Products" },
+  { key: "/users", label: "Users" },
+  { key: "/logout", label: "Logout" },
 ];

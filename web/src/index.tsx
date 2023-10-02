@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { ConfigProvider } from "antd";
 import App from "./App";
+import { AuthProvider } from "./providers/Auth";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -17,7 +18,9 @@ root.render(
         },
       }}
     >
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ConfigProvider>
   </React.StrictMode>
 );

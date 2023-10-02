@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Product } from "../types/product";
+import { Product } from "../../../types/product";
 
 interface VendingMachineContextType {
   product: Product | null;

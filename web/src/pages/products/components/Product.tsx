@@ -11,11 +11,11 @@ import {
 } from "antd";
 import { DeleteOutlined, CheckOutlined } from "@ant-design/icons";
 
-import { Product as ProductType } from "../types/product";
-import { useUser } from "../hooks/useUser";
+import { Product as ProductType } from "../../../types/product";
+import { useUser } from "../../../hooks/useUser";
 import { useState } from "react";
 import { useEditProduct } from "../hooks/useEditProduct";
-import { useProducts } from "../hooks/useProducts";
+import { useProducts } from "../../../hooks/useProducts";
 import { useDeleteProduct } from "../hooks/useDeleteProduct";
 interface ProductProps {
   product: ProductType;

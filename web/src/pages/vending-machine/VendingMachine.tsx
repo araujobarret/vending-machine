@@ -1,8 +1,8 @@
 import { Col, Row } from "antd";
 import { Products } from "../../components/Products";
-import { Basket } from "../../components/Basket";
-import { VendingMachineProvider } from "../../providers/VendingMachineProvider";
-import { UserStatus } from "../../components/UserStatus";
+import { Basket } from "./components/Basket";
+import { VendingMachineProvider } from "./providers/VendingMachineProvider";
+import { UserStatus } from "./components/UserStatus";
 
 export const VendingMachinePage: React.FC = () => {
   return (

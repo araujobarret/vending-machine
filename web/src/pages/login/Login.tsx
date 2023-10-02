@@ -34,7 +34,7 @@ export const LoginPage: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       // Send them back to the page they tried to visit
-      navigate(from, { replace: true });
+      navigate("/");
     }
   }, [isAuthenticated, navigate, from]);
 

@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
-import { useAuthContext } from "../providers/Auth";
-import { apiWithToken } from "../services/api";
-import { Product } from "../types/product";
+import { useAuthContext } from "../../../providers/Auth";
+import { apiWithToken } from "../../../services/api";
+import { Product } from "../../../types/product";
 
 type SaveProductBody = {
   productName: string;

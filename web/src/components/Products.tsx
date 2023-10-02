@@ -1,7 +1,7 @@
 import { Product } from "../types/product";
 import { Button, Empty, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { useVendingMachineContext } from "../providers/VendingMachineProvider";
+import { useVendingMachineContext } from "../pages/vending-machine/providers/VendingMachineProvider";
 import { useProducts } from "../hooks/useProducts";
 
 interface ProductsProps {

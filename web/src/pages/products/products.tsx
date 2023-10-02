@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Products } from "../../components/Products";
 import { Product as ProductType } from "../../types/product";
 import { Button, Col, Row } from "antd";
-import { Product } from "../../components/Product";
-import { NewProduct } from "../../components/NewProduct";
+import { Product } from "./components/Product";
+import { NewProduct } from "./components/NewProduct";
 
 export const ProductsPage: React.FC = () => {
   const [product, setProduct] = useState<ProductType | null>(null);

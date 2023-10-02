@@ -1,5 +1,5 @@
-import { useAuthContext } from "../providers/Auth";
-import { apiWithToken } from "../services/api";
+import { useAuthContext } from "../../../providers/Auth";
+import { apiWithToken } from "../../../services/api";
 
 export const useDeleteProduct = () => {
   const { user } = useAuthContext();

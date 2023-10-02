@@ -12,7 +12,7 @@ import {
 import { CheckOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useSaveProduct } from "../hooks/useSaveProduct";
-import { useProducts } from "../hooks/useProducts";
+import { useProducts } from "../../../hooks/useProducts";
 
 export const NewProduct: React.FC = () => {
   const [name, setName] = useState("");
